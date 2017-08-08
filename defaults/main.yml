@@ -1,2 +1,16 @@
----
-# defaults file for ansible-zookeeper-base
+root_dir: /opt/
+zk_dir: "{{root_dir}}/zookeeper"
+zk_version: 3.4.6
+zk_version_dir: "{{zk_dir}}-{{zk_version}}"
+zk_mirror: "http://mirrors.sonic.net/apache/zookeeper/"
+zk_tarball: "zookeeper-{{zk_version}}.tar.gz"
+zk_url: "{{zk_mirror}}/zookeeper-{{zk_version}}/{{zk_tarball}}"
+
+zk_tick_time: 2000
+zk_data_dir: /var/lib/zookeeper
+zk_log_dir: /var/log/zookeeper
+zk_client_port: 2181
+zk_leader_port: 2888
+zk_zk_port: 3888
+zk_init_limit: 5
+zk_sync_limit: 5

@@ -1,0 +1,9 @@
+tickTime={{ zk_tick_time}}
+dataDir={{ zk_data_dir }}
+clientPort={{ zk_client_port }}
+initLimit={{ zk_init_limit }}
+syncLimit={{ zk_sync_limit }}
+
+{% for host in groups['zookeeper'] %}
+server.{{loop.index - 1}}={{hostvars[host]['ansible_hostname']}}:{{zk_leader_port}}:{{zk_port}}
+{% endfor %}

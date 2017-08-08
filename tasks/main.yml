@@ -1,2 +1,76 @@
 ---
-# tasks file for ansible-zookeeper-base
+- file: path={{root_dir}} state=directory
+
+- name: Download zookeeper
+  get_url: url={{zk_url}} dest={{root_dir}}/{{zk_tarball}}
+  tags: setup
+
+- name: Create zookeeper directory
+  file: path={{zk_version_dir}} state=directory
+  tags: setup
+
+- name: Extract zookeeper tarball
+  unarchive: src={{root_dir}}/{{zk_tarball}} dest={{root_dir}} copy=no
+  tags: setup
+
+- name: Link zookeeper directory
+  file: src={{zk_version_dir}} path={{root_dir}}/zookeeper state=link
+  tags: setup
+
+- group: name=zookeeper system=yes
+  tags: setup
+
+- user: name=zookeeper group=zookeeper system=yes shell=/sbin/nologin
+  tags: setup
+
+- name: Change zookeeper ownership
+  file: path={{zk_version_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
+  tags: setup
+
+- name: Create zookeeper data directory
+  file: path={{data_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
+  tags: setup
+
+- name: Create zookeeper logging directory
+  file: path={{log_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
+  tags: setup
+
+- name: Create zookeeper environment file
+  template: src=zookeeper.env.j2 dest="{{zk_version_dir}}/zookeeper.env"
+  tags: setup
+
+- name: Create myid file
+  copy:
+    content: "{{ groups.zookeeper.index(inventory_hostname) }}"
+    dest: "{{data_dir}}/myid"
+    owner: zookeeper
+    group: zookeeper
+  notify:
+      - Restart zookeeper
+  tags: configure
+
+- name: Create zookeeper configuration
+  template: src=zoo.cfg.j2 dest={{zk_version_dir}}/conf/zoo.cfg owner=zookeeper group=zookeeper
+  notify:
+      - Restart zookeeper
+  tags: configure
+
+- name: Add zookeeper rules to iptables
+  command: /sbin/iptables -I INPUT 1 -p tcp --dport {{item}} -j ACCEPT -m comment --comment "Zookeeper"
+  with_items:
+      - "{{ client_port }}"
+      - "{{ leader_port }}"
+      - "{{ zk_port }}"
+  notify: Save iptables
+  tags: network
+
+- name: Add zookeeper service
+  template: src=zookeeper.service.j2 dest=/etc/systemd/system/zookeeper.service
+  notify:
+      - reload systemctl daemon
+      - Restart zookeeper
+  tags: configure
+
+- name: Start zookeeper
+  service: name=zookeeper state=started enabled=true
+  tags: start

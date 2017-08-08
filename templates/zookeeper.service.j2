@@ -1,0 +1,17 @@
+[Unit]
+Description=Apache ZooKeeper
+
+[Service]
+Type=forking
+EnvironmentFile={{zk_dir}}/zookeeper.env
+ExecStart={{zk_dir}}/bin/zkServer.sh start
+ExecStop={{zk_dir}}/bin/zkServer.sh stop
+ExecReload={{zk_dir}}/bin/zkServer.sh restart
+PIDFile={{zk_data_dir}}/zookeeper_server.pid
+WorkingDirectory={{zk_data_dir}}
+User=zookeeper
+Group=zookeeper
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
