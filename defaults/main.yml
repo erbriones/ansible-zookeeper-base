@@ -17,3 +17,4 @@ zk_sync_limit: 5
 zk_quorum_listen_on_all_ips: yes
 zk_firewall_action: iptables
 zk_ufw_rule: allow
+zk_environment: []

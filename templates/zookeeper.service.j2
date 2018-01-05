@@ -2,6 +2,9 @@
 Description=Apache ZooKeeper
 
 [Service]
+{% for envar in zk_environment -%}
+Environment="{{envar}}"
+{% endfor -%}
 Type=forking
 EnvironmentFile={{zk_dir}}/zookeeper.env
 ExecStart={{zk_dir}}/bin/zkServer.sh start
