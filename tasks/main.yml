@@ -55,14 +55,15 @@
       - Restart zookeeper
   tags: configure
 
-- name: Add zookeeper rules to iptables
-  command: /sbin/iptables -I INPUT 1 -p tcp --dport {{item}} -j ACCEPT -m comment --comment "Zookeeper"
-  with_items:
-      - "{{ client_port }}"
-      - "{{ leader_port }}"
-      - "{{ zk_port }}"
-  notify: Save iptables
-  tags: network
+
+- name: Include default firewall configuration
+  include: "{{ firewall_action }}"
+  with_first_found:
+    - "{{ zk_firewall_action }}.yml"
+    - "iptables.yml"
+  loop_control:
+    loop_var: firewall_action
+
 
 - name: Add zookeeper service
   template: src=zookeeper.service.j2 dest=/etc/systemd/system/zookeeper.service

@@ -1,0 +1,12 @@
+---
+- name: Add ZooKeeper UFW application profile
+  copy:
+      dest: /etc/ufw/applications.d/ufw-zookeeper
+      content: |
+          [ZooKeeper]
+          title=ZooKeeper Server
+          description=The port for ZooKeeper server.
+          ports={{ zk_port }},{{ zk_leader_port }},{{zk_port }}/tcp
+
+- name: Enable ZooKeeper UFW profile
+  ufw: rule={{zk_ufw_rule}} name=ZooKeeper
