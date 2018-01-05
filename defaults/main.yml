@@ -14,3 +14,4 @@ zk_leader_port: 2888
 zk_port: 3888
 zk_init_limit: 5
 zk_sync_limit: 5
+zk_quorum_listen_on_all_ips: yes
