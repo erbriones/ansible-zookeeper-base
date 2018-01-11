@@ -64,6 +64,8 @@
   loop_control:
     loop_var: firewall_action
 
+- name: Add ZooKeeper profile.d script
+  copy: src=zookeeper.sh dest=/etc/profile.d/zookeeper.sh
 
 - name: Add zookeeper service
   template: src=zookeeper.service.j2 dest=/etc/systemd/system/zookeeper.service
