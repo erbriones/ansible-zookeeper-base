@@ -28,11 +28,11 @@
   tags: setup
 
 - name: Create zookeeper data directory
-  file: path={{data_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
+  file: path={{ zk_data_dir }} state=directory owner=zookeeper group=zookeeper recurse=yes
   tags: setup
 
 - name: Create zookeeper logging directory
-  file: path={{log_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
+  file: path={{ zk_log_dir }} state=directory owner=zookeeper group=zookeeper recurse=yes
   tags: setup
 
 - name: Create zookeeper environment file
@@ -42,7 +42,7 @@
 - name: Create myid file
   copy:
     content: "{{ groups.zookeeper.index(inventory_hostname) }}"
-    dest: "{{data_dir}}/myid"
+    dest: "{{ zk_data_dir }}/myid"
     owner: zookeeper
     group: zookeeper
   notify:
