@@ -5,4 +5,4 @@
   service: name=zookeeper state=restarted
 
 - name: Save iptables
-  command: iptables-save
+  command: "iptables-save > /etc/sysconfig/iptables"
